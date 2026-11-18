@@ -4,13 +4,12 @@ function createBrandFinale(){
   const layer=document.querySelector('.brand-finale');
   const field=layer.querySelector('.brand-field'),orb=layer.querySelector('.finale-orb');
   const end=layer.querySelector('.brand-end'),slogan=layer.querySelector('.brand-slogan'),downloads=layer.querySelector('.brand-download');
-  const zero=end.querySelector('.brand-zero');
-  const orbZero=new URLSearchParams(location.search).get('zero')==='ball';
-  layer.classList.toggle('use-orb-zero',orbZero);
+  let bounceStarted=null;
 
   function hide(){
     layer.hidden=true;
     layer.classList.remove('is-looking');
+    bounceStarted=null;
     end.inert=true;
     end.setAttribute('aria-hidden','true');
   }
@@ -27,15 +26,25 @@ function createBrandFinale(){
     const centreX=mix(dock.x,w*.5,lift);
     const centreY=mix(dock.y,h*.5,lift)-Math.sin(Math.PI*lift)*Math.min(h*.075,60);
     let x=centreX,y=centreY,diameter=from*Math.pow(closeUp/from,lift);
-    if(orbZero){
-      const land=ease(.43,.91,progress),slot=zero.getBoundingClientRect();
-      x=mix(centreX,slot.left+slot.width/2,land);
-      y=mix(centreY,slot.top+slot.height/2,land);
-      diameter*=Math.pow(slot.height/closeUp,land);
-    }else{
-      diameter*=Math.pow(Math.hypot(w,h)*1.1/closeUp,zoom);
+    diameter*=Math.pow(Math.hypot(w,h)*1.1/closeUp,zoom);
+    let ballOpacity=feed*(1-ease(.70,.92,progress));
+    if(progress<.96)bounceStarted=null;
+    if(progress>=.96){
+      if(bounceStarted===null)bounceStarted=performance.now();
+      const t=lowMotion()?1:Math.min(1,(performance.now()-bounceStarted)/2900);
+      const logo=end.querySelector('.brand-lockup').getBoundingClientRect();
+      const size=Math.min(logo.height*.45,w*.065),baseline=logo.top-size*.5;
+      const points=[[-.10,-1.55],[.09,0],[.59,0],[.91,0],[1.04,.88]];
+      const times=[0,.24,.58,.82,1],heights=[0,1.15,.76,.42];
+      let index=times.findIndex((value,i)=>i<times.length-1&&t<=times[i+1]);
+      if(index<0)index=times.length-2;
+      const phase=Math.max(0,Math.min(1,(t-times[index])/(times[index+1]-times[index])));
+      x=logo.left+mix(points[index][0],points[index+1][0],phase)*logo.width;
+      y=baseline+mix(points[index][1],points[index+1][1],phase)*logo.height-Math.sin(Math.PI*phase)*logo.height*heights[index];
+      diameter=size;
+      ballOpacity=1;
+      if(t<1)queuePaint();
     }
-    const ballOpacity=orbZero?feed:feed*(1-ease(.70,.92,progress));
     orb.style.display=ballOpacity>0?'block':'none';
     if(ballOpacity>0){
       orb.style.left=x+'px';
@@ -45,8 +54,8 @@ function createBrandFinale(){
     }
     field.style.opacity=String(ease(.03,.66,progress));
     field.style.setProperty('--bloom',String(ease(.2,.57,progress)*(1-ease(.6,.94,progress))));
-    layer.classList.toggle('is-looking',orbZero&&progress>=.92&&!lowMotion());
-    const reveal=orbZero?ease(.53,.89,progress):ease(.78,.97,progress);
+    layer.classList.toggle('is-looking',progress>=.96&&!lowMotion());
+    const reveal=ease(.78,.97,progress);
     end.style.opacity=String(reveal);
     end.inert=progress<.99;
     end.setAttribute('aria-hidden',String(reveal<.5));
