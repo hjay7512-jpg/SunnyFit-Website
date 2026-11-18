@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SunnyFit Weekly Report</title>
+<style>
+*{box-sizing:border-box}html{font-size:16px;scrollbar-width:none}html::-webkit-scrollbar{display:none}body{margin:0;background:#f5f8fe;color:#202027;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif}
+.phone-status{position:sticky;top:0;height:40px;z-index:60;background:#f7f1f3 url('media/screen.png') left top / 375px 812px no-repeat;pointer-events:none}
+html body .weekly_report.weekly_report_c .report_header{top:40px}
+html .report_header .share_action{overflow:visible;transform:scale(var(--tap-scale,1));transition:none}
+.report_header .share_action::after{content:'';position:absolute;pointer-events:none;left:50%;top:50%;width:var(--tap-ring,18px);height:var(--tap-ring,18px);transform:translate(-50%,-50%);border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #bb48585e,0 0 10px #ed755262;background:radial-gradient(circle,#f8a29e70 calc(var(--tap-core,12px) / 2),transparent calc(var(--tap-core,12px) / 2 + 1px));opacity:var(--tap-strength,0)}
+.phone-indicator{position:fixed;bottom:0;left:0;width:100%;height:18px;z-index:65;background:linear-gradient(transparent,#f5f8fe);pointer-events:none}
+.phone-indicator::after{content:'';display:block;margin:7px auto 0;width:132px;height:5px;border-radius:3px;background:#18181b}
+</style></head>
+<body><div class="phone-status" aria-hidden="true"></div><div id="report"></div><div class="phone-indicator" aria-hidden="true"></div><div id="social"></div><script src="report-ui/report.js"></script></body>
+</html>

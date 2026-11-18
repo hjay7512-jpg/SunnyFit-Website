@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#191b19">
+<link rel="icon" href="media/saving-mark.png">
+<title>SunnyFit 3.0</title>
+<link rel="stylesheet" href="workout.css">
+<style>
+:root{
+  --ink:#20231f;--paper:#f8f6f2;--gutter:clamp(22px,6.2vw,120px);--bar:60px;
+  font-family:Inter,"Helvetica Neue",Arial,sans-serif;color-scheme:light
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#181b18;color:#fff}
+a{color:inherit}
+button,summary{font:inherit}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #ffb0ad;outline-offset:3px}
+.site-bar,.menu-sheet{
+  border:1px solid #ffffff51;
+  background:linear-gradient(110deg,rgba(46,47,44,.72),rgba(48,51,47,.58) 55%,rgba(45,48,44,.68));
+  -webkit-backdrop-filter:blur(22px) saturate(148%);backdrop-filter:blur(22px) saturate(148%);
+  box-shadow:inset 0 1px 0 #ffffff45,inset 0 -1px 0 #ffffff16,0 5px 22px #171a1519;color:#fff
+}
+.site-bar{position:fixed;z-index:5;inset:0 0 auto;height:var(--bar);border:0;border-bottom:1px solid #ffffff50;border-radius:0;padding:0 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:inset 0 -1px 0 #ffffff16}
+.site-brand{display:flex;align-items:center;min-height:44px;text-decoration:none}
+.site-brand img{display:block;width:168px;height:auto}
+.desktop-nav,.account-links{display:flex;align-items:center;gap:26px}
+.desktop-nav a{text-decoration:none;text-transform:uppercase;font-size:13px;font-weight:650;letter-spacing:.035em;display:inline-flex;align-items:center;min-height:44px}
+.desktop-nav a:hover,.menu-sheet a:hover{text-decoration:underline;text-underline-offset:4px}
+.desktop-nav .join,.account-links .join{
+  min-height:38px;padding:0 19px;display:inline-flex;justify-content:center;align-items:center;border-radius:999px;
+  background:#c92531;color:white;border:1px solid #ffffff44;box-shadow:inset 0 1px 0 #ffffff42;font-weight:700
+}
+.menu-trigger,.menu-close{display:none;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;color:white;cursor:pointer}
+.menu-trigger span,.menu-trigger span:before,.menu-trigger span:after{width:21px;height:2px;border-radius:2px;background:currentColor;display:block}
+.menu-trigger span:before,.menu-trigger span:after{content:"";position:relative;top:-6px}
+.menu-trigger span:after{top:4px}
+.menu-sheet{position:fixed;inset:76px 12px auto auto;max-height:calc(100dvh - 92px);width:min(420px,calc(100vw - 24px));margin:0;border-radius:22px;padding:0 22px 22px;
+ background:linear-gradient(145deg,rgba(40,44,40,.93),rgba(44,48,44,.87));overflow:auto}
+.menu-sheet::backdrop{background:#171b193b}
+.menu-top{display:flex;justify-content:space-between;align-items:center;padding:10px 0 2px;font-weight:650}
+.menu-close{display:grid;font-size:26px}
+.menu-sheet details{border-bottom:1px solid #ffffff36}
+.menu-sheet summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;min-height:52px;font-weight:600}
+.menu-sheet summary::-webkit-details-marker{display:none}
+.menu-sheet summary:after{content:"";display:block;width:8px;height:8px;border-bottom:1.5px solid;border-right:1.5px solid;transform:rotate(45deg);margin:0 5px 4px 0}
+.menu-sheet details[open] summary:after{transform:rotate(225deg);margin-bottom:-4px}
+.menu-sheet details a{min-height:40px;display:flex;align-items:center;padding:0 8px;text-decoration:none;color:#f1f3eb;font-size:14px}
+.account-links{margin-top:22px;gap:12px}.account-links a{min-height:44px;text-decoration:none;font-size:14px}
+.account-links .signin{padding:0 18px;display:inline-flex;align-items:center;border:1px solid #ffffff66;border-radius:999px}
+.skip{position:fixed;z-index:8;left:20px;top:12px;padding:12px 18px;background:#191c19;color:#fff;transform:translateY(-170%)}
+.skip:focus{transform:none}
+.track{position:fixed;inset:0;z-index:2;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;touch-action:pan-y pinch-zoom}
+.track::-webkit-scrollbar{display:none}
+.track:focus-visible{outline:2px solid #ffb0ad;outline-offset:-3px}
+.scroll-distance{height:450vh;height:450svh;position:relative;pointer-events:none}
+#sunnyfit-home{position:absolute;bottom:0;height:100%;max-height:100vh;pointer-events:none}
+.stage{position:fixed;inset:0;overflow:hidden;background:#1b1e1b;isolation:isolate}
+canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
+.copy{position:absolute;left:var(--gutter);max-width:47%;pointer-events:none}
+.gym-copy{bottom:14%;text-shadow:0 2px 26px #16171088}
+.home-copy{top:49%;transform:translateY(-50%);color:var(--ink);opacity:0}
+.eyebrow{font-size:clamp(10px,.8vw,13px);font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:0 0 18px}
+h1,h2{margin:0;font-size:clamp(48px,5.8vw,110px);line-height:.99;letter-spacing:-.056em;font-weight:600;text-wrap:balance}
+.support{font-size:clamp(16px,1.34vw,23px);line-height:1.45;color:#545950;max-width:29ch;margin:22px 0 0}
+footer{position:absolute;bottom:clamp(14px,3.8vh,44px);inset-inline:var(--gutter);display:flex;align-items:center;justify-content:space-between;font-size:12px;letter-spacing:.02em;color:#fff}
+.rail{width:min(180px,23vw);height:2px;background:currentColor;position:relative}
+.rail span{display:block;background:#df2b33;height:3px;position:absolute;inset:0 auto auto 0;width:0}
+.motion-toggle{position:fixed;z-index:5;right:var(--gutter);bottom:calc(15px + env(safe-area-inset-bottom));min-height:36px;padding:0 13px;border:1px solid #ffffff60;border-radius:999px;background:#232722c9;color:#fff;font-size:12px;font-weight:600;cursor:pointer;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+footer{right:calc(var(--gutter) + 150px)}
+@media(max-width:1023px){
+ :root{--bar:52px}
+ .site-bar{height:calc(var(--bar) + env(safe-area-inset-top));padding:env(safe-area-inset-top) 12px 0 20px}
+ .site-brand img{width:137px}.desktop-nav{display:none}.menu-trigger{display:grid}
+ .menu-sheet{top:calc(68px + env(safe-area-inset-top))}
+}
+@media(max-width:740px) and (orientation:portrait),(max-aspect-ratio:4/5){
+ :root{--gutter:clamp(18px,5.4vw,32px)}
+ .copy{max-width:calc(100% - var(--gutter) * 2)}
+ .gym-copy{bottom:12%}.home-copy{top:66%;transform:none}
+ .eyebrow{margin-bottom:10px;font-size:10px}
+ h1,h2{font-size:clamp(33px,min(10.5vw,6.8svh),68px);line-height:1.02}
+ .support{margin-top:10px;font-size:clamp(14px,3.75vw,19px);max-width:34ch}
+ footer{bottom:calc(18px + env(safe-area-inset-bottom));font-size:11px}
+}
+@media(max-height:500px) and (orientation:landscape){.gym-copy{bottom:17%}.eyebrow{margin-bottom:8px}.support{margin-top:8px}h1,h2{font-size:clamp(31px,5vw,54px)}}
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){.site-bar,.menu-sheet{background:#353a36f5}}
+@media(max-width:740px){footer .rail{display:none}}
+
+html:has(.menu-sheet[open]){overflow:hidden}.menu-sheet{overscroll-behavior:contain}
+</style>
+</head>
+<body>
+<a class="skip" href="#sunnyfit-home">Skip to SunnyFit Home</a>
+<header class="site-bar">
+  <a class="site-brand" href="#home-gym" aria-label="SunnyFit home"><img id="logo" src="media/logo.svg" width="188" height="32" alt="SunnyFit"></a>
+  <nav class="desktop-nav" aria-label="Main navigation">
+    <a href="https://sunnyhealthfitness.com/">Shop</a>
+    <a href="https://sunnyfit.com/sign">Sign in</a>
+    <a class="join" href="https://sunnyfit.com/signup">Join for free</a>
+  </nav>
+  <button class="menu-trigger" type="button" aria-label="Open menu" aria-controls="site-menu" aria-expanded="false"><span aria-hidden="true"></span></button>
+</header>
+<dialog id="site-menu" class="menu-sheet" aria-label="Main navigation">
+  <div class="menu-top">Menu<button class="menu-close" type="button" aria-label="Close menu">×</button></div>
+  <nav aria-label="Mobile navigation">
+    <details><summary>About</summary><a href="https://sunnyhealthfitness.com/pages/about-us">Our Story</a><a href="https://sunnyhealthfitness.com/pages/press">Press</a></details>
+    <details><summary>Support</summary><a href="https://sunnyhealthfitness.com/pages/sunnyfit-app-faq">Help Center</a><a href="https://support.sunnyhealthfitness.com/hc/en-us">Contact Us</a></details>
+    <details><summary>Legal</summary><a href="https://sunnyfit.com/foot/privacy">Privacy Policy</a><a href="https://sunnyfit.com/foot/terms">Terms</a></details>
+    <div class="account-links"><a class="join" href="https://sunnyfit.com/signup">Join for free</a><a class="signin" href="https://sunnyfit.com/sign">Sign in</a></div>
+  </nav>
+</dialog>
+<div class="track" tabindex="0" role="region" aria-label="SunnyFit workout story"><div class="scroll-distance"><div id="home-gym"></div><div id="sunnyfit-home"></div></div><button class="phone-target" id="weekly-open" type="button" hidden aria-label="View your weekly report"></button></div>
+<main class="stage">
+ <video id="course-film" muted playsinline preload="none" aria-hidden="true" src="media/row-workout.mp4"></video>
+ <canvas role="img" aria-label="A rower at home starts a SunnyFit class, follows the coach, and reviews the completed session."></canvas>
+ <section class="copy gym-copy"><p class="eyebrow">At home</p><h1>A little time<br>for yourself.</h1></section>
+ <section class="copy home-copy"><p class="eyebrow">Your personal fitness guide</p><h2>Know what<br>to do next.</h2><p class="support">Personalized guidance for your next workout.</p></section>
+ <section class="copy session-copy" aria-hidden="true"><p class="eyebrow">During your workout</p><h2>Move at your<br>own pace.</h2><p class="support">Follow your coach through rowing and strength intervals. See every stroke add up.</p></section>
+ <section class="copy result-copy" aria-hidden="true"><p class="eyebrow">After your workout</p><h2>Every move<br> counts.</h2><p class="support"></p></section>
+ <section class="copy next-copy" aria-hidden="true"><p class="eyebrow">Your dynamic plan</p><h2>A plan for today.</h2><p class="support">Find your next workout in 3,000+ courses and 10,000+ scenic routes, with a recommendation that fits your day.</p></section>
+ <section class="copy report-copy" aria-hidden="true"><p class="eyebrow">Weekly report</p><h2>Your week in review.</h2><p class="support"></p></section>
+ <section class="copy report-copy community-copy" aria-hidden="true"><p class="eyebrow">SunnyFam Community</p><h2>Share your week.</h2><p class="support">Bring your weekly report to SunnyFam and celebrate the workouts you made time for.</p></section>
+ <span class="assistive-status" role="status" aria-live="polite"></span>
+ <footer><span class="scroll-hint">Scroll to explore ↓</span><span class="rail" aria-hidden="true"><span></span></span></footer>
+</main>
+<iframe id="weekly-frame" title="SunnyFit Weekly Report" tabindex="-1" hidden></iframe>
+<div class="brand-finale" hidden>
+  <div class="brand-field" aria-hidden="true"></div>
+  <svg class="finale-orb" xmlns="http://www.w3.org/2000/svg" viewBox="7.6 7.6 40.8 40.8" fill="none" aria-hidden="true">
+    <defs>
+    <clipPath id="sf-ai-ball-1-clip">
+    <circle cx="28" cy="28" r="16"/>
+    </clipPath>
+    <radialGradient id="sf-ai-ball-1-base" cx=".34" cy=".26" r=".85">
+    <stop stop-color="#fff9ec" stop-opacity=".08"/>
+    <stop offset=".62" stop-color="#e3e9e4" stop-opacity=".08"/>
+    <stop offset="1" stop-color="#9aafa8" stop-opacity=".25"/>
+    </radialGradient>
+    <radialGradient id="sf-ai-ball-1-shine" cx=".3" cy=".2" r=".8">
+    <stop stop-color="#fff" stop-opacity=".17"/>
+    <stop offset=".48" stop-color="#fff" stop-opacity=".015"/>
+    <stop offset=".8" stop-color="#dceae4" stop-opacity=".035"/>
+    <stop offset="1" stop-color="#829b91" stop-opacity=".18"/>
+    </radialGradient>
+    <linearGradient id="sf-ai-ball-1-rim" x1="14" y1="10" x2="42" y2="47" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#fff" stop-opacity=".96"/>
+    <stop offset=".46" stop-color="#fff7e8" stop-opacity=".7"/>
+    <stop offset="1" stop-color="#97aaa5" stop-opacity=".42"/>
+    </linearGradient>
+    <filter id="sf-ai-ball-1-blur" x="-70%" y="-70%" width="240%" height="240%">
+    <feGaussianBlur stdDeviation="2.8"/>
+    </filter>
+    <filter id="sf-ai-ball-1-soft" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+    </defs>
+    <g>
+    <circle cx="28" cy="28" r="20" fill="url(#sf-ai-ball-1-base)" class="sf-ai-ball__body"/>
+    <g clip-path="url(#sf-ai-ball-1-clip)">
+    <g data-face-track="colours" transform="translate(-1.3 -4.199999999999999)" class="sf-ai-ball__face-track">
+    <g filter="url(#sf-ai-ball-1-blur)" class="sf-ai-ball__colours">
+    <circle cx="24" cy="22" r="11.5" fill="#ffe0a5" opacity=".96" class="sf-ai-ball__warm"/>
+    <circle cx="28" cy="33" r="12.3" fill="#ff747f" opacity=".94" class="sf-ai-ball__accent"/>
+    <circle cx="36" cy="26" r="8" fill="#aabeb7" opacity=".22" class="sf-ai-ball__depth"/>
+    </g>
+    </g>
+    </g>
+    <g data-layer="glass-cover" class="sf-ai-ball__glass">
+    <circle cx="28" cy="28" r="20" fill="url(#sf-ai-ball-1-shine)"/>
+    <circle cx="28" cy="28" r="19.6" stroke="url(#sf-ai-ball-1-rim)" stroke-width=".8"/>
+    <path d="M12.5 25.5C13.7 17.6 18 13.4 24.7 12.6" stroke="white" stroke-opacity=".65" stroke-width=".65" stroke-linecap="round"/>
+    </g>
+    </g>
+    <g data-face-track="eyes" data-layer="eyes-outside-glass">
+    <g class="sf-ai-ball__eyes">
+    <g transform="translate(20.461188189758836 25.905354709909517) rotate(5.4047406629633405)" class="sf-ai-ball__eye">
+    <g data-eye="0" class="sf-ai-ball__lid">
+    <rect x="-2" y="-4.5" width="4" height="9" rx="2" fill="white"/>
+    </g>
+    </g>
+    <g transform="translate(28.393582222089655 26.655848911338897) rotate(5.4047406629633405)" class="sf-ai-ball__eye">
+    <g data-eye="1" class="sf-ai-ball__lid">
+    <rect x="-2" y="-4.5" width="4" height="9" rx="2" fill="white"/>
+    </g>
+    </g>
+    </g>
+    </g>
+    </svg>
+  <section class="brand-end" aria-hidden="true" inert>
+    <h2 class="brand-lockup" aria-label="SunnyFit 3.0"><img src="media/logo-on-light.svg" alt=""><span class="brand-version" aria-hidden="true">3.<span class="brand-zero">0</span></span></h2>
+    <p class="brand-slogan">Fit For Everyone</p>
+    <nav class="brand-download" aria-label="Download SunnyFit">
+      <a href="https://apps.apple.com/us/app/sunnyfit-for-home-fitness/id1600604256">App Store</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://play.google.com/store/apps/details?id=com.amoyyg.sunny">Google Play</a>
+    </nav>
+  </section>
+</div>
+<button class="motion-toggle" type="button" aria-label="Reduced motion" aria-pressed="false">Reduce motion</button>
+<div class="screen-sources" hidden>
+ <img id="course-cover" src="media/course-cover.png" alt=""><img id="result-layout" src="media/result-refined.png" alt="">
+ <img id="rank-avatars" src="media/rank-avatars.png" alt=""><img id="save-mark" src="media/saving-mark.png" alt="">
+ <img id="course-poster" src="media/row-poster.webp" alt="">
+<img id="room-soft" alt="" src="media/room-soft.webp">
+<img id="room-mid" alt="" src="media/room-mid.webp">
+<img id="room-near" alt="" src="media/room-near.webp">
+ <img id="room" src="media/room.webp" alt="">
+ <!-- Alpha 578:2220 artwork. The rowing course card and its fields are filled by homeScreen(). -->
+ <img id="screen" src="media/screen.png" alt="">
+</div>
+<script src="workout.js"></script>
+<script>
+'use strict';
+const PHOTO = { width:6000, height:4000 };
+const DEVICE = { width:312, height:8+304*812/375 };
+// Measured in the uncropped campaign photo. The bottom edge meets the inner lip of the holder.
+const mounted = { a:137/DEVICE.width, b:-6/DEVICE.width, c:-94/DEVICE.height, d:277/DEVICE.height, x:4256, y:1128 };
+const lip = [[4142,1406],[4164,1401],[4300,1395],[4310,1380],[4318,1383],[4312,1408],[4156,1419]];
+
+function drawHandset(ctx, ui) {
+  const {width:w,height:h}=DEVICE;
+  ctx.save();
+  const rim=ctx.createLinearGradient(0,0,w,0);
+  rim.addColorStop(0,'#666a67'); rim.addColorStop(.022,'#202321');
+  rim.addColorStop(.975,'#151815'); rim.addColorStop(1,'#6e726d');
+  ctx.fillStyle=rim;
+  ctx.beginPath(); ctx.roundRect(0,0,w,h,17); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(4,4,w-8,h-8,13); ctx.clip();
+  ctx.drawImage(ui,4,4,w-8,h-8);
+  ctx.restore();
+}
+function clipLip(ctx) {
+  ctx.beginPath(); lip.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.closePath(); ctx.clip();
+}
+const room=document.querySelector('#room'),screen=document.querySelector('#screen');
+const canvas=document.querySelector('.stage canvas'),stage=document.querySelector('.stage');
+const ctx=canvas.getContext('2d',{alpha:false}),phoneTexture=document.createElement('canvas');
+const gymCopy=document.querySelector('.gym-copy'),homeCopy=document.querySelector('.home-copy');
+const footer=document.querySelector('footer'),hint=document.querySelector('.scroll-hint'),rail=document.querySelector('.rail span');
+const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+const track=document.querySelector('.track'),motionToggle=document.querySelector('.motion-toggle');
+const motionKey='sunnyfit.story.motion';
+function selectedMode(){
+  const requested=new URLSearchParams(location.search).get('motion');
+  if(['on','reduce','system'].includes(requested))return requested;
+  try{const saved=localStorage.getItem(motionKey);if(['on','reduce','system'].includes(saved))return saved}catch{}
+  const localPreview=location.protocol==='file:'||['127.0.0.1','localhost','[::1]'].includes(location.hostname);
+  return localPreview?'on':'system';
+}
+let motionMode=selectedMode();
+function lowMotion(){return motionMode==='reduce'||(motionMode==='system'&&reduced.matches)}
+const narrow=matchMedia('(max-width:740px) and (orientation:portrait),(max-aspect-ratio:4/5)');
+const menu=document.querySelector('.menu-sheet'),trigger=document.querySelector('.menu-trigger');
+trigger.addEventListener('click',()=>{
+  menu.showModal();
+  trigger.setAttribute('aria-expanded','true');
+});
+function closeMenu(){
+  trigger.setAttribute('aria-expanded','false');
+  menu.close();
+}
+document.querySelector('.menu-close').addEventListener('click',closeMenu);
+menu.addEventListener('cancel',event=>{event.preventDefault();closeMenu()});
+menu.addEventListener('click',event=>{
+  const r=menu.getBoundingClientRect();
+  if(event.target===menu&&(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom))closeMenu();
+});
+menu.addEventListener('close',()=>{
+  trigger.setAttribute('aria-expanded','false');
+  menu.querySelectorAll('details[open]').forEach(el=>el.open=false);
+});
+matchMedia('(min-width:1024px)').addEventListener('change',event=>{if(event.matches&&menu.open)closeMenu()});
+
+const mix=(a,b,t)=>a+(b-a)*t;
+function ease(start,end,t){
+  const x=Math.max(0,Math.min(1,(t-start)/(end-start)));
+  return x*x*(3-2*x);
+}
+const handsetPose=new DOMMatrix([mounted.a,mounted.b,mounted.c,mounted.d,mounted.x,mounted.y]);
+const plane=new DOMMatrix([mounted.a,mounted.b,mounted.c,mounted.d,0,0]);
+const pitch=Math.sqrt(plane.a*plane.d-plane.b*plane.c);
+const faceOn=new DOMMatrix().scale(pitch).multiply(plane.inverse());
+let ready=false,dirty=false;
+function shot(t,w,h,mobile){
+  const establishingHeight=mobile?h*.765:h;
+  const wide=Math.max(w/PHOTO.width,establishingHeight/PHOTO.height);
+  const left=(w-wide*PHOTO.width)*(mobile?.57:.5);
+  const top=(establishingHeight-wide*PHOTO.height)*(mobile?.25:.09);
+  const subject=new DOMPoint(DEVICE.width/2,DEVICE.height/2);
+  const subjectInRoom=subject.matrixTransform(handsetPose);
+  const startX=left+wide*subjectInRoom.x,startY=top+wide*subjectInRoom.y;
+  const wideUnit=wide*pitch;
+  const safeTop=w<1024?75:90;
+  const finalH=mobile?Math.min(h*.55,w*1.43,h*.626-safeTop):Math.min(h*.735,w*.66,h-safeTop-32);
+  const endUnit=Math.max(1,finalH)/DEVICE.height;
+  const finalMidX=w*(mobile?.5:.73);
+  const finalMidY=mobile?(safeTop+h*.626)/2:(safeTop+h*.92)/2;
+  // One dolly from the original photograph to the layout's final handset size.
+  const travel=Math.min(1,t/.95);
+  const dolly=travel*(1+travel*(1-travel));
+  const unit=Math.exp(mix(Math.log(wideUnit),Math.log(endUnit),dolly));
+  const x=mix(startX,finalMidX,dolly),y=mix(startY,finalMidY,dolly);
+  // Correct the camera's viewing angle for the entire physical scene. A separately
+  // rotated handset would leave the baked holder behind as the lens approaches.
+  const angle=ease(.23,.84,t);
+  const orient=new DOMMatrix([mix(1,faceOn.a,angle),faceOn.b*angle,faceOn.c*angle,mix(1,faceOn.d,angle),0,0]);
+  const world=new DOMMatrix().translate(x,y).scale(unit/pitch).multiply(orient).translate(-subjectInRoom.x,-subjectInRoom.y);
+  return {world,phone:world.multiply(handsetPose),focus:ease(.22,.95,t)};
+}
+function applyMatrix(m){ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f)}
+function drawRoom(frame,mobile,t,w,h,widePlate=room){
+  ctx.fillStyle='#1b1d19';ctx.fillRect(0,0,w,h);
+  ctx.save();applyMatrix(frame.world);
+  // Precomputed circular apertures sample the same photograph in linear light.
+  // Apply them in room coordinates so leaves and highlights stay registered.
+  let level=0;
+  while(level<focusPlates.length-2&&frame.focus>focusPlates[level+1].at)level++;
+  const from=focusPlates[level],to=focusPlates[level+1];
+  const blend=(frame.focus-from.at)/(to.at-from.at);
+  if(blend<1)ctx.drawImage(level===0?widePlate:from.image,0,0,PHOTO.width,PHOTO.height);
+  if(blend>0){
+    ctx.globalAlpha=blend;ctx.drawImage(to.image,0,0,PHOTO.width,PHOTO.height);ctx.globalAlpha=1;
+  }
+  if(mobile){
+    const floor=ctx.createLinearGradient(0,PHOTO.height*.68,0,PHOTO.height);
+    floor.addColorStop(0,'#1b1d1900');floor.addColorStop(1,'#1b1d19');
+    ctx.fillStyle=floor;ctx.fillRect(0,PHOTO.height*.68,PHOTO.width,PHOTO.height*.32+1);
+  }
+  ctx.restore();
+  if(!mobile&&t<.29){
+    const shade=ctx.createLinearGradient(0,h*.7,w*.65,h*.35);
+    shade.addColorStop(0,'#12160fa8');shade.addColorStop(1,'#12160f00');
+    ctx.save();ctx.globalAlpha=1-ease(.09,.29,t);ctx.fillStyle=shade;ctx.fillRect(0,0,w,h);ctx.restore();
+  }
+}
+function lightBehindCopy(w,h,mobile,t){
+  const reveal=ease(.58,.94,t);
+  if(!reveal)return;
+  const light=mobile?ctx.createLinearGradient(0,h*.54,0,h*.92):ctx.createLinearGradient(0,0,w*.68,0);
+  light.addColorStop(0,mobile?'#faf8f200':'#faf8f2ef');
+  light.addColorStop(mobile?.43:.46,mobile?'#faf8f2c9':'#faf8f2d9');
+  light.addColorStop(1,mobile?'#faf8f2f2':'#faf8f200');
+  ctx.save();ctx.globalAlpha=reveal;ctx.fillStyle=light;ctx.fillRect(0,0,w,h);ctx.restore();
+}
+function paint(){
+  dirty=false;
+  if(!ready)return;
+  const w=stage.clientWidth,h=stage.clientHeight,pixelRatio=Math.min(devicePixelRatio||1,2);
+  if(!w||!h)return;
+  const cw=Math.round(w*pixelRatio),ch=Math.round(h*pixelRatio);
+  if(canvas.width!==cw||canvas.height!==ch){canvas.width=cw;canvas.height=ch}
+  ctx.setTransform(cw/w,0,0,ch/h,0,0);
+  const progress=Math.max(0,Math.min(1,track.scrollTop/Math.max(1,track.scrollHeight-track.clientHeight)));
+  const opening=Math.min(1,track.scrollTop/(track.clientHeight*3.5));
+  const t=lowMotion()?(opening<.5?0:1):opening;
+  const mobile=narrow.matches,frame=shot(t,w,h,mobile);
+  if(workout.renderAfterHome(w,h,mobile,progress))return;
+  drawRoom(frame,mobile,t,w,h);
+  lightBehindCopy(w,h,mobile,t);
+  // The original Home artwork is drawn after the optical background, in focus.
+  ctx.save();applyMatrix(frame.phone);
+  ctx.drawImage(phoneTexture,0,0,DEVICE.width,DEVICE.height);
+  if(t<.42){
+    ctx.fillStyle='rgba(23,24,18,'+(.17*(1-ease(.10,.42,t)))+')';
+    ctx.beginPath();ctx.roundRect(4,4,DEVICE.width-8,DEVICE.height-8,13);ctx.fill();
+  }
+  ctx.restore();
+  const lipVisibility=1-ease(.27,.64,t);
+  if(lipVisibility>0){
+    ctx.save();ctx.globalAlpha=lipVisibility;applyMatrix(frame.world);clipLip(ctx);
+    ctx.drawImage(room,0,0,PHOTO.width,PHOTO.height);ctx.restore();
+  }
+  const first=1-ease(.05,.27,t),last=ease(.68,.94,t);
+  gymCopy.style.opacity=String(first);homeCopy.style.opacity=String(last);
+  gymCopy.setAttribute('aria-hidden',String(first<.01));homeCopy.setAttribute('aria-hidden',String(last<.01));
+  footer.style.opacity=String(Math.max(1-ease(.12,.27,t),ease(.86,.98,t)));
+  footer.style.color=t<.6?'white':'#343830';
+  hint.textContent=t<.95?'Scroll to explore ↓':'Scroll to start ↓';
+  rail.style.width=Math.round(rail.parentElement.clientWidth*progress)+'px';
+  if(opening>=.90)workout.prepareFilm();
+}
+function queuePaint(){if(!dirty){dirty=true;requestAnimationFrame(paint)}}
+function syncMode(){
+  motionToggle.setAttribute('aria-pressed',String(lowMotion()));
+  motionToggle.textContent=lowMotion()?'Enable camera motion':'Reduce motion';
+  queuePaint();
+}
+motionToggle.addEventListener('click',()=>{
+  motionMode=lowMotion()?'on':'reduce';
+  try{localStorage.setItem(motionKey,motionMode)}catch{}
+  if(location.search.includes('motion=')){
+    const next=new URL(location.href);next.searchParams.set('motion',motionMode);
+    try{history.replaceState(null,'',next)}catch{}
+  }
+  syncMode();
+});
+document.querySelector('.skip').addEventListener('click',event=>{
+  event.preventDefault();workout.goHome();track.focus({preventScroll:true});
+});
+document.querySelector('.site-brand').addEventListener('click',event=>{
+  event.preventDefault();track.scrollTop=0;
+});
+window.addEventListener('resize',queuePaint);
+track.addEventListener('scroll',queuePaint,{passive:true});
+window.addEventListener('keydown',event=>{
+  if(menu.open||event.defaultPrevented||event.altKey||event.ctrlKey||event.metaKey||event.target===track||event.target.closest('button,a,summary,input,textarea,[contenteditable]'))return;
+  const delta={ArrowDown:52,ArrowUp:-52,PageDown:track.clientHeight*.8,PageUp:-track.clientHeight*.8,Home:-track.scrollHeight,End:track.scrollHeight,' ':track.clientHeight*(event.shiftKey?-.8:.8)}[event.key];
+  if(delta!==undefined){event.preventDefault();track.scrollTop+=delta}
+});
+reduced.addEventListener('change',syncMode);syncMode();
+const focusPlates=[{at:0,image:room},{at:.15,image:document.querySelector('#room-soft')},
+  {at:.53,image:document.querySelector('#room-mid')},{at:1,image:document.querySelector('#room-near')}];
+const workout=createWorkoutStory();
+Promise.all([screen,...focusPlates.map(plate=>plate.image),...workout.images].map(image=>image.decode())).then(()=>{
+  const density=screen.naturalWidth/DEVICE.width;
+  phoneTexture.width=screen.naturalWidth;phoneTexture.height=Math.ceil(DEVICE.height*density);
+  const texture=phoneTexture.getContext('2d');
+  texture.scale(density,density);drawHandset(texture,workout.homeScreen());
+  ready=true;workout.goScene(new URLSearchParams(location.search).get('scene'));queuePaint();
+});
+</script>
+</body>
+</html>

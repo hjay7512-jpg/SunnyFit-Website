@@ -1,0 +1,44 @@
+.track .scroll-distance{height:2510vh;height:2510svh}
+.brand-finale{position:fixed;z-index:4;inset:0;overflow:hidden;pointer-events:none}
+.brand-field,.brand-end{position:absolute;inset:0}
+.brand-field{background:radial-gradient(ellipse at 28% 4%,#fff0d6aa,transparent 52%),radial-gradient(ellipse at 83% 94%,#f8b8bd77,transparent 53%),#fffaf6}
+.brand-field::after{content:'';position:absolute;inset:-12%;background:radial-gradient(ellipse at 47% 39%,#fff3c7 9%,#ffdad8 36%,#fcb5bc 52%,transparent 72%);opacity:var(--bloom,0)}
+.finale-orb{position:absolute;transform:translate(-50%,-50%);display:block;max-width:none;aspect-ratio:1}
+.brand-end{display:grid;align-items:center;justify-items:center;color:#252428}
+.brand-lockup{display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.4vw,40px);margin:0}
+.brand-lockup img{width:clamp(170px,31vw,580px);height:auto}
+.brand-version{font:550 clamp(37px,6.2vw,114px)/1 Inter,"Helvetica Neue",Arial,sans-serif;letter-spacing:-.075em;white-space:nowrap}
+.use-orb-zero .brand-zero{display:inline-block;width:.76em;height:.75em;line-height:.75em;vertical-align:baseline;color:transparent}
+.brand-finale.is-looking .sf-ai-ball__eyes{animation:brand-glance 7.6s ease-in-out infinite;transform-origin:28px 27px}
+.brand-finale.is-looking .sf-ai-ball__colours{animation:brand-colours 7.6s ease-in-out infinite}
+@keyframes brand-glance{0%,12%,100%{transform:translate(0,0)}33%,46%{transform:translate(6px,1px) rotate(-9deg)}70%,84%{transform:translate(-1px,1px) rotate(2deg)}}
+@keyframes brand-colours{0%,12%,100%{transform:translateX(0)}33%,46%{transform:translateX(2.4px)}70%,84%{transform:translateX(-.5px)}}
+.brand-slogan{position:absolute;top:calc(50% + clamp(35px,4.45vw,80px));margin:0;font-size:clamp(19px,2.15vw,38px);font-weight:450;letter-spacing:-.035em}
+.brand-download{position:absolute;top:calc(50% + clamp(84px,10vw,167px));display:flex;align-items:center;gap:15px;font-size:clamp(13px,1.05vw,16px);color:#51464a}
+.brand-download a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:4px}
+.brand-end:not([inert]) .brand-download a{pointer-events:auto}
+#course-film{position:absolute;inset:50% auto auto 50%;width:2px;height:2px;pointer-events:none}
+.session-copy,.result-copy{top:49%;transform:translateY(-50%);color:#20231f;opacity:0}
+.stage .session-copy{max-width:32%}
+.stage .session-copy h2,.stage .result-copy h2{font-size:clamp(45px,5.2vw,94px)}
+.stage .result-copy{left:55%;max-width:39%}
+.assistive-status{position:absolute;overflow:hidden;clip-path:inset(50%);width:1px;height:1px;white-space:nowrap}
+.stage .next-copy,.stage .report-copy{top:49%;left:55%;max-width:39%;transform:translateY(-50%);color:var(--ink);opacity:0}
+.stage .next-copy h2,.stage .report-copy h2{font-size:clamp(45px,5.2vw,94px)}
+.phone-target{position:fixed;padding:0;border:0;background:transparent;border-radius:10px;touch-action:pan-y;cursor:pointer}
+.phone-target:focus-visible{outline:3px solid #ba1f2b;outline-offset:1px}
+#weekly-frame{position:fixed;left:0;top:0;width:375px;height:812px;margin:0;border:0;transform-origin:0 0;z-index:3;background:#f5f8fe}
+@media(max-width:740px) and (orientation:portrait),(max-aspect-ratio:4/5){
+ .stage .session-copy,.stage .result-copy{top:62%;left:var(--gutter);transform:none;max-width:calc(100% - var(--gutter)*2)}
+ .stage .result-copy{top:70%}
+ .stage .next-copy,.stage .report-copy{top:70%;left:var(--gutter);max-width:calc(100% - var(--gutter)*2);transform:none}
+ .stage .next-copy h2,.stage .report-copy h2{font-size:clamp(31px,min(9vw,5.8svh),52px)}
+ .stage .next-copy .support,.stage .report-copy .support{font-size:clamp(13px,3.6vw,16px);line-height:1.32;max-width:40ch}
+ .stage .result-copy h2 br{display:none}
+ .stage .result-copy .support{font-size:clamp(13px,3.6vw,16px);line-height:1.32;max-width:40ch}
+ .stage .session-copy h2,.stage .result-copy h2{font-size:clamp(32px,min(10vw,6.3svh),60px)}
+}
+@media(max-height:500px) and (orientation:landscape){
+ .stage .session-copy h2,.stage .result-copy h2{font-size:clamp(26px,4.1vw,45px)}
+ .stage .next-copy h2,.stage .report-copy h2{font-size:clamp(26px,4.1vw,45px)}
+}
